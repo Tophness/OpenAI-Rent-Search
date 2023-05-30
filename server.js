@@ -15,7 +15,7 @@ function extractListingDetails(html) {
     const price = priceElement.text().trim();
     const ldJsonScripts = $(element).find('script[type="application/ld+json"]').first();
     const features = [];
-    const description = "";
+    let description = "";
 
     $(element).find('ul.features li.feature').each((index, element) => {
       const value = $(element).find('span.value').text().trim();
