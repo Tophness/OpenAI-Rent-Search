@@ -24,14 +24,6 @@ function extractDataFromHTML(html) {
         const isEmpty = Object.keys(json).length === 0;
         const residenceUrl = json.url;
 
-    if (json['@type'] === 'RentAction')) {
-      const residenceIndex = jsonObjects.findIndex(obj => obj['@type'] === 'Residence' && obj.imageUrl === json.imageUrl);
-      if (residenceIndex !== -1) {
-        const residence = jsonObjects[residenceIndex];
-        residence.priceSpecification = json.priceSpecification;
-      }
-    }
-
         if (!isDuplicate && !isEmpty && !uniqueUrls.has(residenceUrl) && json['@type'] !== "RentAction") {
           uniqueUrls.add(residenceUrl);
           json.imageUrl = imageUrl;
