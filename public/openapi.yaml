@@ -114,7 +114,7 @@ components:
       properties:
         totalListings:
           type: number
-          description: Total number of property listings. You can also use this to work out how many more pages there are to navigate through by multiplying the current page number by 20, then dividing the totalListings number by that
+          description: Total number of property listings. You can also use this to work out how many more pages there are to navigate through by dividing the totalListings number by 20
         nextPageNum:
           type: number
           description: The next page number to navigate to
