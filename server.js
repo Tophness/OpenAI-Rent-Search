@@ -18,7 +18,7 @@ function extractDataFromHTML(html) {
     ldJsonScripts.each((index, element) => {
       const script = $(element);
       const json = JSON.parse(script.html().replace('//<![CDATA[', '').replace('//]]>', ''));
-      jsonObjects.push(json);
+      jsonObjects.push(JSON.stringify(json));
     });
 
     extractedData.push({ imageUrl, jsonObjects });
