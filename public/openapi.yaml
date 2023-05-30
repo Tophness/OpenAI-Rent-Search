@@ -110,34 +110,37 @@ paths:
 components:
   schemas:
     getApartmentsResponse:
-      type: array
-      items:
-        type: object
-        properties:
-          address:
-            type: string
-          imageUrl:
-            type: string
-            description: URL of the image to be displayed in chat
-          price:
-            type: string
-          features:
-            type: array
-            items:
-              type: string
-            description: List of features the property has
-          propType:
-            type: string
-            description: Property type
-          description:
-            type: string
-            description: Description of the property listing
-          url:
-            type: string
-            description: URL of the property listing
-          totalListings:
-            type: number
-            description: Total number of property listings. You can work out how many more pages there are to navigate through by multiplying the page number by 20, then dividing the totalListings number by that.
-          nextPageNum:
-            type: number
-            description: The next page number to navigate to.
+      type: object
+      properties:
+        totalListings:
+          type: number
+          description: Total number of property listings. You can work out how many more pages there are to navigate through by multiplying the page number by 20, then dividing the totalListings number by that.
+        nextPageNum:
+          type: number
+          description: The next page number to navigate to.
+        listings:
+          type: array
+          items:
+            type: object
+            properties:
+              address:
+                type: string
+              imageUrl:
+                type: string
+                description: URL of the image to be displayed in chat
+              price:
+                type: string
+              features:
+                type: array
+                items:
+                  type: string
+                description: List of features the property has
+              propType:
+                type: string
+                description: Property type
+              description:
+                type: string
+                description: Description of the property listing
+              url:
+                type: string
+                description: URL of the property listing
