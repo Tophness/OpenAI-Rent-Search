@@ -4,18 +4,23 @@ const cheerio = require('cheerio');
 
 function extractListingDetails(html) {
   const $ = cheerio.load(html);
-  let nextPageNum = 1
+  let nextPageNum = 1;
   const totalListings = $('div.listings h1.text-heading strong').text();
-  try{
+  try {
     const lastPageElement = $('.listings .ui-pagination li.pge:last-child');
     const nextPageLink = lastPageElement.find('a[rel="next"]');
     if (nextPageLink.length !== 0) {
-      nextPageNum = nextPageLink.attr('href');
+      const parts = nextPageLink.attr('href').split('/');
+      const lastPart = parts[parts.length - 1];
+      nextPageNum = lastPart.replace('p', '');
     }
-  } catch (error) {
-  }
+  } catch (error) {}
 
-  const listings = [];
+  const returnJSON = {
+    totalListings: totalListings,
+    nextPageNum: nextPageNum,
+    listings: []
+  };
 
   $('article.property-cell').each((index, element) => {
     const address = $(element).find('h2.address').text().trim();
@@ -50,76 +55,40 @@ function extractListingDetails(html) {
       }
     }
 
-    listings.push({
+    const listing = {
       address: address,
       imageUrl: imageUrl,
       price: price,
       features: features,
       propType: propType,
       description: description,
-      url: url,
-      totalListings: totalListings,
-      nextPageNum: nextPageNum
-    });
+      url: url
+    };
+
+    returnJSON.listings.push(listing);
   });
 
-  return listings;
+  return returnJSON;
 }
 
 const app = express();
 app.use(express.static('public'));
 app.use(proxy('https://www.rent.com.au', {
-  proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
-    if (srcReq.url.indexOf('/properties') !== -1) {
-      proxyReqOpts.headers["Accept"] = "text/html";
-    }
-    proxyReqOpts.headers["Cookie"] = "";
-    proxyReqOpts.headers["Access-Control-Allow-Origin"] = "*";
-    proxyReqOpts.headers["Access-Control-Allow-Methods"] = "*";
-    proxyReqOpts.headers["Access-Control-Allow-Headers"] = "*";
-    proxyReqOpts.headers["Access-Control-Allow-Credentials"] = "true";
-    return proxyReqOpts;
-  },
   userResDecorator: function(proxyRes, proxyResData, req, res) {
-    res.set("Access-Control-Allow-Origin","*");
-    res.set("Access-Control-Allow-Methods","*");
-    res.set("Access-Control-Allow-Headers","*");
-    res.set("Access-Control-Allow-Credentials","true");
-    res.set("x-amz-apigw-id","");
-    res.set("x-amzn-remapped-connection","");
-    res.set("x-amz-apigw-id","");
-    res.set("x-amzn-remapped-date","");
-    res.set("x-amzn-remapped-server","");
-    res.set("x-amzn-requestid","");
-    res.set("x-amz-apigw-id","");
-    res.set("x-content-type-options","");
-    res.set("x-frame-options","");
-    res.set("x-amz-apigw-id","");
-    res.set("x-permitted-cross-domain-policies","*");
-    res.set("x-amz-apigw-id","");
-    res.set("x-powered-by","");
-    res.set("x-render-origin-server","");
-    res.set("x-request-id","");
-    res.set("x-xss-protection","");
-    res.set("referrer-policy","");
-    res.set("link","");
-    res.set("etag","");
-
     if (req.url.indexOf('/properties') !== -1) {
-       res.set("content-type", "application/json; charset=utf-8");
-       res.set("accept", "application/json");
-       const imgParam = req.url.match('[?&]images=([^&]+)');
-       let returnJSON = extractListingDetails(proxyResData);
-       if (!imgParam || imgParam[1] == "0") {
-         returnJSON = returnJSON.map(obj => {
-           delete obj.imageUrl;
-           return obj;
-         });
-       }
-       return JSON.stringify(returnJSON);
-    }
-    else{
-       return proxyResData;
+      res.set("content-type", "application/json; charset=utf-8");
+      res.set("accept", "application/json");
+      const imgParam = req.url.match('[?&]images=([^&]+)');
+      let returnJSON = extractListingDetails(proxyResData);
+      if (!imgParam || imgParam[1] == "0") {
+        returnJSON.listings = returnJSON.listings.map(obj => {
+          delete obj.imageUrl;
+          return obj;
+        });
+      }
+      return JSON.stringify(returnJSON);
+    } else {
+      return proxyResData;
     }
   }
 }));
