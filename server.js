@@ -21,7 +21,6 @@ function extractDataFromHTML(html) {
 
       try {
         const json = JSON.parse(jsonText);
-        json.imageUrl = imageUrl;
 
         const isDuplicate = jsonObjects.some((obj) => JSON.stringify(obj) === JSON.stringify(json));
         const isEmpty = Object.keys(json).length === 0;
@@ -29,6 +28,7 @@ function extractDataFromHTML(html) {
 
         if (!isDuplicate && !isEmpty && !uniqueUrls.has(residenceUrl)) {
           uniqueUrls.add(residenceUrl);
+          json.imageUrl = imageUrl;
           jsonObjects.push(json);
         }
       } catch (error) {
