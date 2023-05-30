@@ -89,7 +89,7 @@ paths:
           schema:
             type: integer
           required: false
-          description: Set to 0 to disable image results or any other number to set how many images per result to return. Default value is 2
+          description: Set to 0 to disable image results or 1 to include image results. Default value is 1
       responses:
         "200":
           description: OK
