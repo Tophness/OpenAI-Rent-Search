@@ -4,6 +4,17 @@ const cheerio = require('cheerio');
 
 function extractListingDetails(html) {
   const $ = cheerio.load(html);
+  let nextPageNum = 1
+  const totalListings = $('div.listings h1.text-heading strong').text();
+  try{
+    const lastPageElement = $('.listings .ui-pagination li.pge:last-child');
+    const nextPageLink = lastPageElement.find('a[rel="next"]');
+    if (nextPageLink.length !== 0) {
+      nextPageNum = nextPageLink.attr('href');
+    }
+  } catch (error) {
+  }
+
   const listings = [];
 
   $('article.property-cell').each((index, element) => {
@@ -46,7 +57,9 @@ function extractListingDetails(html) {
       features: features,
       propType: propType,
       description: description,
-      url: url
+      url: url,
+      totalListings: totalListings,
+      nextPageNum: nextPageNum
     });
   });
 
