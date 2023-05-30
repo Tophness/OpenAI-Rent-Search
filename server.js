@@ -10,7 +10,7 @@ function extractListingDetails(html) {
     const address = $(element).find('h2.address').text().trim();
     const imageUrl = $(element).find('img.card-photo').attr('src');
     const priceElement = $(element).find('span.price');
-    const propType = $(priceElement).find('.property-type');
+    const propType = $(priceElement).find('.property-type').text().trim();
     priceElement.find('.property-type').remove();
     const price = priceElement.text().trim();
     const features = [];
