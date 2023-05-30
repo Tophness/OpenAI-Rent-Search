@@ -132,3 +132,6 @@ components:
           description:
             type: string
             description: Description of the property listing
+          url:
+            type: string
+            description: URL of the property listing
