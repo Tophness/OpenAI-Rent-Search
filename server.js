@@ -9,7 +9,10 @@ function extractListingDetails(html) {
   $('article.property-cell').each((index, element) => {
     const address = $(element).find('h2.address').text().trim();
     const imageUrl = $(element).find('img.card-photo').attr('src');
-    const price = $(element).find('span.price').text().trim();
+    const priceElement = $(element).find('span.price');
+    const propType = $(priceElement).find('.property-type');
+    priceElement.find('.property-type').remove();
+    const price = priceElement.text().trim();
     const features = [];
 
     $(element).find('ul.features li.feature').each((index, element) => {
@@ -21,7 +24,8 @@ function extractListingDetails(html) {
       address: address,
       imageUrl: imageUrl,
       price: price,
-      features: features
+      features: features,
+      propType: propType
     });
   });
 
