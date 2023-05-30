@@ -54,8 +54,10 @@ const app = express();
 app.use(express.static('public'));
 app.use(proxy('https://www.rent.com.au', {
   proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
+    if (srcReq.url.indexOf('/properties') !== -1) {
+      proxyReqOpts.headers["Accept"] = "text/html";
+    }
     proxyReqOpts.headers["Cookie"] = "";
-    proxyReqOpts.headers["Accept"] = "text/html";
     proxyReqOpts.headers["Access-Control-Allow-Origin"] = "*";
     proxyReqOpts.headers["Access-Control-Allow-Methods"] = "*";
     proxyReqOpts.headers["Access-Control-Allow-Headers"] = "*";
