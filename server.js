@@ -64,6 +64,10 @@ app.use(proxy('https://www.rent.com.au', {
     return proxyReqOpts;
   },
   userResDecorator: function(proxyRes, proxyResData, req, res) {
+    res.set("Access-Control-Allow-Origin","*");
+    res.set("Access-Control-Allow-Methods","*");
+    res.set("Access-Control-Allow-Headers","*");
+    res.set("Access-Control-Allow-Credentials","true");
     if (req.url.indexOf('/properties') !== -1) {
        res.set("content-type", "application/json; charset=utf-8");
        res.set("accept", "application/json");
