@@ -14,9 +14,7 @@ function extractListingDetails(html) {
 
     $(element).find('ul.features li.feature').each((index, element) => {
       const value = $(element).find('span.value').text().trim();
-      features.push({
-        value: value
-      });
+      features.push(value);
     });
 
     listings.push({
