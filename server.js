@@ -94,6 +94,7 @@ app.use(proxy('https://www.rent.com.au', {
        res.set("accept", "application/json");
        const imgParam = req.url.match('[?&]images=([^&]+)');
        let returnJSON = extractListingDetails(proxyResData);
+console.log(imgParam);
        if (!imgParam || imgParam == "0") {
          returnJSON = returnJSON.map(obj => {
            delete obj.imageUrl;
