@@ -6,54 +6,88 @@ info:
 servers:
   - url: https://openai-rent-search.onrender.com
 paths:
-  /rent/:
+  /properties/{suburbs}:
     get:
       operationId: getApartments
       summary: |
-        Get a list of available apartments in the area the user is searching. After the response, prompt to learn more
-        about a specific apartment, see similar apartments, get in contact with the property manager of a chosen
-        apartment, or view more results from the same search.
+        Get a list of available apartments in the area the user is searching. After the response, you can view more results from the same search.
       parameters:
+        - in: path
+          name: suburbs
+          schema:
+            type: string
+          required: true
+          description: Suburbs to search for apartments, formatted as suburb+postcode, separated by commas. e.g. fairfield+2165,penrith+2750
+        - in: query
+          name: surrounding_suburbs
+          schema:
+            type: string
+          required: false
+          description: Set to 1 to include surrounding suburbs, or 0 do only use the exact suburbs entered
+        - in: query
+          name: rent_low
+          schema:
+            type: integer
+          required: false
+          description: Minimum price range for an apartment.
+        - in: query
+          name: rent_high
+          schema:
+            type: integer
+          required: false
+          description: Maximum price range for an apartment.
         - in: query
           name: page
           schema:
             type: integer
           required: false
-          description: Page of results to request. Starts at 1.
-        - in: query
-          name: suburb
-          schema:
-            type: string
-          required: true
-          description: Suburbs to search for apartments, formatted as suburb-state-postcode, separated by commas. e.g. chatswood-nsw-2067,gordon-nsw-2072
+          description: Page of results to request. Starts at 1
         - in: query
           name: bedrooms
           schema:
-            type: string
-          required: true
-          description: Number of bedrooms user is requesting. If user wants a minimum number of rooms, format it as a single number. e.g. 2. If user wants a range, format it as min-max. e.g. 2-4. "any" can be requested too. e.g. 3-any
-        - in: query
-          name: price
-          schema:
-            type: string
+            type: integer
           required: false
-          description: Price range for an apartment. If user wants a maximum price, format it as an integer. e.g. 500. If user wants a range, format it as min-max. e.g. 200-500
+          description: Minimum number of bedrooms user is requesting
         - in: query
-          name: excludedeposittaken
+          name: bathrooms
           schema:
             type: integer
           required: false
-          description: Exclude apartments with deposits taken
+          description: Minimum number of bathrooms user is requesting
         - in: query
-          name: features
+          name: car_spaces
           schema:
-            type: string
+            type: integer
           required: false
-          description: Set to "petsallowed" if the user wants a pet friendly apartment
+          description: Minimum number of car spaces user is requesting
+        - in: query
+          name: walk_category
+          schema:
+            type: integer
+          required: false
+          description: Walk category user is requesting. 1 = Walker's Paradise, 2 = Very Walkable, 3 = Somewhat Walkable, 4 = Car Dependant
+        - in: query
+          name: nbn_category
+          schema:
+            type: integer
+          required: false
+          description: Whether NBN internet is required. 0 = Not Required, 1 = Required
+        - in: query
+          name: long_term_lease
+          schema:
+            type: integer
+          required: false
+          description: Whether user requires long term lease. 0 = Not Required, 1 = Required
+        - in: query
+          name: build_to_rent
+          schema:
+            type: integer
+          required: false
+          description: Whether user requires build to rent option. 0 = Not Required, 1 = Required
         - in: query
           name: images
           schema:
-            type: number
+            type: integer
           required: false
           description: Set to 0 to disable image results or any other number to set how many images per result to return. Default value is 2
       responses:
@@ -76,68 +110,25 @@ paths:
 components:
   schemas:
     getApartmentsResponse:
-      type: object
-      properties:
-        totalPages:
-          type: number
-          description: Total number of pages to use for pagination.
-        page:
-          type: number
-          description: Current page number to use for pagination.
-        resultsPerPage:
-          type: number
-          description: Number of current listing results per page to use for pagination.
-        totalResults:
-          type: number
-          description: Total number of listing results to use for pagination.
-        listings:
-          type: object
-          additionalProperties:
-            type: object
-            properties:
-              listingModel:
-                type: object
-                properties:
-                  address:
-                    type: object
-                    properties:
-                      city:
-                        type: string
-                      state:
-                        type: string
-                      street:
-                        type: string
-                      postcode:
-                        type: string
-                      suburb:
-                        type: string
-                  images:
-                    type: array
-                    items:
-                      type: string
-                    description: Image urls to be displayed as images in the chat.
-                  features:
-                    type: object
-                    properties:
-                      baths:
-                        type: number
-                      beds:
-                        type: number
-                      landsize:
-                        type: number
-                      landUnit:
-                        type: string
-                      propertyTypeFormatted:
-                        type: string
-                  url:
-                    type: string
-                    description: URL to the property listing. Start with the root server www.domain.com.au followed by this url.
-                  price:
-                    type: string
-                  inspection:
-                    type: object
-                    properties:
-                      openTime:
-                        type: string
-                      closeTime:
-                        type: string
+      type: array
+      items:
+        type: object
+        properties:
+          address:
+            type: string
+          imageUrl:
+            type: string
+            description: URL of the image to be displayed in chat
+          price:
+            type: string
+          features:
+            type: array
+            items:
+              type: string
+            description: List of features the property has
+          propType:
+            type: string
+            description: Property type
+          description:
+            type: string
+            description: Description of the property listing
