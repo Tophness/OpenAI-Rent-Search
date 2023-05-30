@@ -22,8 +22,8 @@ function extractListingDetails(html) {
       features.push(value);
     });
 
-    if (script.length > 0) {
-      let jsonText = script.html();
+    if (ldJsonScripts.length > 0) {
+      let jsonText = ldJsonScripts.html();
       jsonText = jsonText.replace('//<![CDATA[', '').replace('//]]>', '');
       try {
         const json = JSON.parse(jsonText);
