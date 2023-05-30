@@ -5,7 +5,11 @@ const cheerio = require('cheerio');
 function extractListingDetails(html) {
   const $ = cheerio.load(html);
   let nextPageNum = 1;
-  const totalListings = $('div.listings h1.text-heading strong').text();
+  let totalListings = 0;
+  const totalList = $('div.listings h1.text-heading strong');
+  if(totalList && totalList.text()){
+    totalListings = parseInt(totalList.text());
+  }
   try {
     const lastPageElement = $('.listings .ui-pagination li.pge:last-child');
     const nextPageLink = lastPageElement.find('a[rel="next"]');
