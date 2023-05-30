@@ -6,14 +6,13 @@ function extractDataFromHTML(html) {
   const $ = cheerio.load(html);
   const articles = $('article');
 
-  const extractedData = [];
+  const jsonObjects = [];
 
   articles.each((index, element) => {
     const article = $(element);
     const imageUrl = article.find('img.card-photo').attr('src');
 
     const ldJsonScripts = article.find('script[type="application/ld+json"]');
-    const jsonObjects = [];
 
     ldJsonScripts.each((index, element) => {
       const script = $(element);
@@ -24,17 +23,20 @@ function extractDataFromHTML(html) {
 
       try {
         const json = JSON.parse(jsonText);
-        console.log(JSON.stringify(json));
-        jsonObjects.push(json);
+        json.imageUrl = imageUrl;
+
+        // Check if the same JSON object already exists
+        const isDuplicate = jsonObjects.some((obj) => JSON.stringify(obj) === JSON.stringify(json));
+        if (!isDuplicate) {
+          jsonObjects.push(json);
+        }
       } catch (error) {
         console.error('Error parsing JSON:', error);
       }
     });
-
-    extractedData.push({ imageUrl, jsonObjects });
   });
 
-  return extractedData;
+  return jsonObjects;
 }
 
 const app = express();
@@ -52,7 +54,7 @@ app.use(proxy('https://www.rent.com.au', {
   },
   userResDecorator: function(proxyRes, proxyResData, req, res) {
     if (req.url.indexOf('/properties') !== -1) {
-       extractDataFromHTML(proxyResData);
+       console.log(JSON.stringify(extractDataFromHTML(proxyResData)));
     }
        return proxyResData;
   }
