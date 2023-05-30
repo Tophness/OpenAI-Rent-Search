@@ -30,7 +30,6 @@ function extractListingDetails(html) {
         const isEmpty = Object.keys(json).length === 0;
 
         if (!isEmpty && json['@type'] !== "RentAction") {
-          uniqueUrls.add(residenceUrl);
           description = json.description;
         }
       } catch (error) {
