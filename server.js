@@ -16,7 +16,7 @@ function extractListingDetails(html) {
     if (nextPageLink.length !== 0) {
       const parts = nextPageLink.attr('href').split('/');
       const lastPart = parts[parts.length - 1];
-      nextPageNum = lastPart.replace('p', '');
+      nextPageNum = parseInt(lastPart.replace('p', ''));
     }
   } catch (error) {}
 
