@@ -41,7 +41,7 @@ app.use(proxy('https://www.rent.com.au', {
   },
   userResDecorator: function(proxyRes, proxyResData, req, res) {
     if (req.url.indexOf('/properties') !== -1) {
-       console.log(extractedData(proxyResData));
+       console.log(extractDataFromHTML(proxyResData));
     }
        return proxyResData;
   }
