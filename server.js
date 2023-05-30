@@ -25,7 +25,7 @@ function extractDataFromHTML(html) {
         const residenceUrl = json.url;
 
         if (json['@type'] === 'RentAction') {
-          jsonObjects[-1].priceSpecification = json.priceSpecification;
+          jsonObjects[jsonObjects.length - 1].priceSpecification = json.priceSpecification;
         }
 
         if (!isDuplicate && !isEmpty && !uniqueUrls.has(residenceUrl) && json['@type'] !== "RentAction") {
