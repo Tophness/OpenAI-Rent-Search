@@ -11,23 +11,24 @@ function extractDataFromHTML(html) {
   articles.each((index, element) => {
     const article = $(element);
     const imageUrl = article.find('img.card-photo').attr('src');
-
     const ldJsonScripts = article.find('script[type="application/ld+json"]');
+    const uniqueUrls = new Set();
 
     ldJsonScripts.each((index, element) => {
       const script = $(element);
       let jsonText = script.html();
-
-      // Remove CDATA sections
       jsonText = jsonText.replace('//<![CDATA[', '').replace('//]]>', '');
 
       try {
         const json = JSON.parse(jsonText);
         json.imageUrl = imageUrl;
 
-        // Check if the same JSON object already exists
         const isDuplicate = jsonObjects.some((obj) => JSON.stringify(obj) === JSON.stringify(json));
-        if (!isDuplicate) {
+        const isEmpty = Object.keys(json).length === 0;
+        const residenceUrl = json.url;
+
+        if (!isDuplicate && !isEmpty && !uniqueUrls.has(residenceUrl)) {
+          uniqueUrls.add(residenceUrl);
           jsonObjects.push(json);
         }
       } catch (error) {
