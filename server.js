@@ -2,43 +2,32 @@ const express = require('express');
 const proxy = require('express-http-proxy');
 const cheerio = require('cheerio');
 
-function extractDataFromHTML(html) {
+function extractListingDetails(html) {
   const $ = cheerio.load(html);
-  const articles = $('article');
+  const listings = [];
 
-  const jsonObjects = [];
+  $('article.property-cell').each((index, element) => {
+    const address = $(element).find('h2.address').text().trim();
+    const imageUrl = $(element).find('img.card-photo').attr('src');
+    const price = $(element).find('span.price').text().trim();
+    const features = [];
 
-  articles.each((index, element) => {
-    const article = $(element);
-    const imageUrl = article.find('img.card-photo').attr('src');
-    const ldJsonScripts = article.find('script[type="application/ld+json"]');
-    const uniqueUrls = new Set();
+    $(element).find('ul.features li.feature').each((index, element) => {
+      const value = $(element).find('span.value').text().trim();
+      features.push({
+        value: value
+      });
+    });
 
-    ldJsonScripts.each((index, element) => {
-      const script = $(element);
-      let jsonText = script.html();
-      jsonText = jsonText.replace('//<![CDATA[', '').replace('//]]>', '');
-      try {
-        const json = JSON.parse(jsonText);
-        const isDuplicate = jsonObjects.some((obj) => JSON.stringify(obj) === JSON.stringify(json));
-        const isEmpty = Object.keys(json).length === 0;
-        const residenceUrl = json.url;
-
-        if (json['@type'] === 'RentAction') {
-          jsonObjects[jsonObjects.length - 1].priceSpecification = json.priceSpecification;
-        }
-
-        if (!isDuplicate && !isEmpty && !uniqueUrls.has(residenceUrl) && json['@type'] !== "RentAction") {
-          uniqueUrls.add(residenceUrl);
-          json.imageUrl = imageUrl;
-          jsonObjects.push(json);
-        }
-      } catch (error) {
-        console.error('Error parsing JSON:', error);
-      }
+    listings.push({
+      address: address,
+      imageUrl: imageUrl,
+      price: price,
+      features: features
     });
   });
-  return jsonObjects;
+
+  return listings;
 }
 
 const app = express();
@@ -56,9 +45,9 @@ app.use(proxy('https://www.rent.com.au', {
   },
   userResDecorator: function(proxyRes, proxyResData, req, res) {
     if (req.url.indexOf('/properties') !== -1) {
-       console.log(JSON.stringify(extractDataFromHTML(proxyResData)));
+       console.log(extractListingDetails(proxyResData));
     }
-       return proxyResData;
+    return proxyResData;
   }
 }));
 
