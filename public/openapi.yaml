@@ -135,3 +135,9 @@ components:
           url:
             type: string
             description: URL of the property listing
+          totalListings:
+            type: number
+            description: Total number of property listings. You can work out how many more pages there are to navigate through by multiplying the page number by 20, then dividing the totalListings number by that.
+          nextPageNum:
+            type: number
+            description: The next page number to navigate to.
