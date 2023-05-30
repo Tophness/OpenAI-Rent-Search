@@ -13,19 +13,38 @@ function extractListingDetails(html) {
     const propType = $(priceElement).find('.property-type').text().trim();
     priceElement.find('.property-type').remove();
     const price = priceElement.text().trim();
+    const ldJsonScripts = $(element).find('script[type="application/ld+json"]').first();
     const features = [];
+    const description = "";
 
     $(element).find('ul.features li.feature').each((index, element) => {
       const value = $(element).find('span.value').text().trim();
       features.push(value);
     });
 
+    if (script.length > 0) {
+      let jsonText = script.html();
+      jsonText = jsonText.replace('//<![CDATA[', '').replace('//]]>', '');
+      try {
+        const json = JSON.parse(jsonText);
+        const isEmpty = Object.keys(json).length === 0;
+
+        if (!isEmpty && json['@type'] !== "RentAction") {
+          uniqueUrls.add(residenceUrl);
+          description = json.description;
+        }
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
+    }
+
     listings.push({
       address: address,
       imageUrl: imageUrl,
       price: price,
       features: features,
-      propType: propType
+      propType: propType,
+      description: description
     });
   });
 
