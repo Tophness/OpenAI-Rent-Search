@@ -92,7 +92,12 @@ app.use(proxy('https://www.rent.com.au', {
     if (req.url.indexOf('/properties') !== -1) {
        res.set("content-type", "application/json; charset=utf-8");
        res.set("accept", "application/json");
-       return JSON.stringify(extractListingDetails(proxyResData));
+       const imgParam = req.url.match('[?&]images=([^&]+)');
+       let returnJSON = extractListingDetails(proxyResData);
+       if (imgParam) {
+         delete returnJSON.images;
+       }
+       return JSON.stringify(returnJSON);
     }
     else{
        return proxyResData;
