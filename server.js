@@ -4,13 +4,18 @@ const cheerio = require('cheerio');
 
 function extractListingDetails(html) {
   const $ = cheerio.load(html);
-  let nextPageNum = 1;
+  let nextPageNum = 2;
+  let currentPageNum = 1;
   let totalListings = 0;
   const totalList = $('div.listings h1.text-heading strong');
   if(totalList && totalList.text()){
     totalListings = parseInt(totalList.text());
   }
   try {
+    const activeLink = $('.pge a.-active');
+    if (activeLink.length > 0) {
+      currentPageNum = parseInt(activeLink.text().trim());
+    }
     const lastPageElement = $('.listings .ui-pagination li.pge:last-child');
     const nextPageLink = lastPageElement.find('a[rel="next"]');
     if (nextPageLink.length !== 0) {
@@ -23,6 +28,7 @@ function extractListingDetails(html) {
   const returnJSON = {
     totalListings: totalListings,
     nextPageNum: nextPageNum,
+    currentPageNum: currentPageNum,
     listings: []
   };
 
