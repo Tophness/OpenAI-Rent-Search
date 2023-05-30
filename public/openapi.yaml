@@ -106,7 +106,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: The reason the request was rejected.
+                    description: The reason the request was rejected
 components:
   schemas:
     getApartmentsResponse:
@@ -114,10 +114,13 @@ components:
       properties:
         totalListings:
           type: number
-          description: Total number of property listings. You can work out how many more pages there are to navigate through by multiplying the page number by 20, then dividing the totalListings number by that.
+          description: Total number of property listings. You can also use this to work out how many more pages there are to navigate through by multiplying the current page number by 20, then dividing the totalListings number by that
         nextPageNum:
           type: number
-          description: The next page number to navigate to.
+          description: The next page number to navigate to
+        currentPageNum:
+          type: number
+          description: The current page number
         listings:
           type: array
           items:
