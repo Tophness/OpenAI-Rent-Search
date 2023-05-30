@@ -17,8 +17,18 @@ function extractDataFromHTML(html) {
 
     ldJsonScripts.each((index, element) => {
       const script = $(element);
-      const json = JSON.parse(script.html().replace('//<![CDATA[', '').replace('//]]>', ''));
-      jsonObjects.push(JSON.stringify(json));
+      let jsonText = script.html();
+
+      // Remove CDATA sections
+      jsonText = jsonText.replace('//<![CDATA[', '').replace('//]]>', '');
+
+      try {
+        const json = JSON.parse(jsonText);
+        console.log(JSON.stringify(json));
+        jsonObjects.push(json);
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
     });
 
     extractedData.push({ imageUrl, jsonObjects });
@@ -41,7 +51,7 @@ app.use(proxy('https://www.rent.com.au', {
   },
   userResDecorator: function(proxyRes, proxyResData, req, res) {
     if (req.url.indexOf('/properties') !== -1) {
-       console.log(extractDataFromHTML(proxyResData));
+       extractDataFromHTML(proxyResData);
     }
        return proxyResData;
   }
