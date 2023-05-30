@@ -54,8 +54,6 @@ const app = express();
 app.use(express.static('public'));
 app.use(proxy('https://www.rent.com.au', {
   proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
-    if (srcReq.url.indexOf('/properties') !== -1) {
-    }
     proxyReqOpts.headers["Cookie"] = "";
     proxyReqOpts.headers["Access-Control-Allow-Origin"] = "*";
     proxyReqOpts.headers["Access-Control-Allow-Methods"] = "*";
@@ -84,6 +82,9 @@ app.use(proxy('https://www.rent.com.au', {
     res.set("x-render-origin-server","");
     res.set("x-request-id","");
     res.set("x-xss-protection","");
+    res.set("referrer-policy","");
+    res.set("link","");
+    res.set("etag","");
 
     if (req.url.indexOf('/properties') !== -1) {
        res.set("content-type", "application/json; charset=utf-8");
