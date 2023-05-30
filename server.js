@@ -65,8 +65,8 @@ app.use(proxy('https://www.rent.com.au', {
   },
   userResDecorator: function(proxyRes, proxyResData, req, res) {
     if (req.url.indexOf('/properties') !== -1) {
-       res.headers["content-type"] = "application/json; charset=utf-8";
-       res.headers["accept"] = "application/json";
+       res.setHeaders("content-type", "application/json; charset=utf-8");
+       res.setHeaders("accept", "application/json");
        return JSON.stringify(extractListingDetails(proxyResData));
     }
     else{
